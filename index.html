@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MeSA 2.0 — Medication & Safety Assistant Robot</title>
+  <meta name="description" content="MeSA 2.0 is a tabletop assistive robot that recognizes medications, tracks whether they've been taken, watches for falls, and alerts a caregiver — offline, on a Raspberry Pi." />
+
+  <!-- Open Graph / social preview -->
+  <meta property="og:title" content="MeSA 2.0 — Medication & Safety Assistant Robot" />
+  <meta property="og:description" content="Right medication. On time. Safe at home." />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="assets/og-image.png" />
+
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="#top" aria-label="MeSA 2.0 home">
+      <img src="assets/logo.svg" alt="MeSA 2.0" height="32" />
+    </a>
+    <nav class="nav">
+      <a href="#what">What it does</a>
+      <a href="#how">How it works</a>
+      <a href="#demo">Demo</a>
+      <a href="#results">Results</a>
+      <a class="nav-cta" href="https://github.com/VrishaankMishra/mesa-ai-robot" target="_blank" rel="noopener">GitHub ↗</a>
+    </nav>
+  </header>
+
+  <main id="top">
+    <!-- HERO -->
+    <section class="hero">
+      <p class="eyebrow">Assistive home-care robot · Raspberry Pi 5</p>
+      <h1>Right medication.<br />On time. Safe at home.</h1>
+      <p class="lede">
+        MeSA 2.0 is a tabletop robot that recognizes medications, tracks whether they've
+        been taken, watches for falls, answers questions by voice, and escalates to a
+        caregiver when something's wrong — all running <strong>offline</strong>.
+      </p>
+      <div class="cta-row">
+        <a class="btn btn-primary" href="#demo">Watch the demo</a>
+        <a class="btn btn-ghost" href="https://github.com/VrishaankMishra/mesa-ai-robot" target="_blank" rel="noopener">View the code</a>
+      </div>
+      <p class="disclaimer">An assistive aid, not a medical device.</p>
+
+      <!-- Replace this placeholder with a muted autoplay loop or hero photo after filming -->
+      <figure class="hero-media" aria-label="MeSA prototype">
+        <div class="media-placeholder">
+          <span>Hero shot / 30s silent loop of the assembled robot</span>
+        </div>
+      </figure>
+    </section>
+
+    <!-- PROBLEM -->
+    <section class="band" id="problem">
+      <div class="col-narrow">
+        <p class="section-label">The problem</p>
+        <h2>Living independently shouldn't mean living at risk.</h2>
+        <p>
+          For older adults and people managing complex prescriptions, three things go wrong
+          most often: a <strong>missed dose</strong>, the <strong>wrong pill</strong>, and an
+          <strong>unwitnessed fall</strong>. Existing solutions are either expensive, cloud-bound,
+          or require the person to remember to use them. MeSA watches quietly and only speaks up
+          when it matters.
+        </p>
+      </div>
+    </section>
+
+    <!-- WHAT IT DOES -->
+    <section class="band" id="what">
+      <p class="section-label">What it does</p>
+      <h2>Five things, working together.</h2>
+      <ol class="features">
+        <li>
+          <span class="feat-num">01</span>
+          <h3>Recognizes medications</h3>
+          <p>Computer vision identifies each bottle and flags anything unfamiliar as a possible wrong medication.</p>
+        </li>
+        <li>
+          <span class="feat-num">02</span>
+          <h3>Tracks doses taken</h3>
+          <p>Removing and returning a bottle logs a timestamped "taken" event, visible on a live dashboard.</p>
+        </li>
+        <li>
+          <span class="feat-num">03</span>
+          <h3>Detects falls</h3>
+          <p>Real-time posture classification; prolonged lying triggers a spoken check-in.</p>
+        </li>
+        <li>
+          <span class="feat-num">04</span>
+          <h3>Answers by voice</h3>
+          <p>Ask what's next, whether a dose was taken, the date and time — or call for help, hands-free and offline.</p>
+        </li>
+        <li>
+          <span class="feat-num">05</span>
+          <h3>Escalates to a caregiver</h3>
+          <p>No response? A three-step escalation goes from a spoken check-in to a phone notification to a caregiver alert.</p>
+        </li>
+      </ol>
+    </section>
+
+    <!-- HOW IT WORKS -->
+    <section class="band" id="how">
+      <p class="section-label">How it works</p>
+      <h2>One small computer. One event loop.</h2>
+      <p class="col-narrow">
+        A single Raspberry Pi runs vision and audio workers that publish events to one queue;
+        a decision engine consumes them and drives compliance tracking, fall detection, and
+        escalation. Everything is local — no cloud, no account, no data leaving the home.
+      </p>
+      <pre class="diagram" aria-label="System architecture">
+USB cam ─▶ Vision  (YOLOv8 detect · MediaPipe pose) ─┐
+USB mic ─▶ Audio   (Vosk STT · pyttsx3 TTS)          ├─▶  Decision engine  ─┬─▶ SQLite log
+                                                     │                      ├─▶ Live dashboard
+                                                     └──────────────────────┴─▶ Caregiver alert
+      </pre>
+      <ul class="tech-tags">
+        <li>Python</li><li>YOLOv8</li><li>MediaPipe</li><li>Vosk</li><li>SQLite</li>
+        <li>Streamlit</li><li>Raspberry Pi 5</li><li>Offline</li>
+      </ul>
+    </section>
+
+    <!-- DEMO -->
+    <section class="band" id="demo">
+      <p class="section-label">Demo</p>
+      <h2>See it run.</h2>
+      <figure class="video-frame">
+        <!-- After uploading to YouTube, replace with:
+             <iframe src="https://www.youtube.com/embed/VIDEO_ID" title="MeSA 2.0 demo"
+                     allowfullscreen loading="lazy"></iframe> -->
+        <div class="media-placeholder media-16x9">
+          <span>Main 3–4 min demo video (embed YouTube here)</span>
+        </div>
+      </figure>
+      <p class="caption col-narrow">
+        The full walkthrough shows all five capabilities live: detection, dose logging, fall
+        check-in, voice commands, and the caregiver escalation.
+      </p>
+    </section>
+
+    <!-- RESULTS -->
+    <section class="band" id="results">
+      <p class="section-label">Results</p>
+      <h2>Measured, not claimed.</h2>
+      <div class="stats">
+        <div class="stat"><span class="stat-num" data-placeholder>≥90%</span><span class="stat-label">detection mAP@50</span></div>
+        <div class="stat"><span class="stat-num" data-placeholder>≥90%</span><span class="stat-label">posture accuracy</span></div>
+        <div class="stat"><span class="stat-num" data-placeholder>5+ FPS</span><span class="stat-label">on Raspberry Pi 5</span></div>
+        <div class="stat"><span class="stat-num" data-placeholder>100%</span><span class="stat-label">offline / on-device</span></div>
+      </div>
+      <p class="caption">Numbers are demo targets; replace with measured results from the evaluation report.</p>
+    </section>
+
+    <!-- ABOUT -->
+    <section class="band" id="about">
+      <div class="col-narrow">
+        <p class="section-label">About</p>
+        <h2>Built end to end by one student.</h2>
+        <p>
+          MeSA 2.0 is an independent engineering project: dataset collection and model
+          training, an offline voice assistant, a real-time decision engine, and a robot
+          built on a Raspberry Pi — designed, coded, and assembled from scratch.
+        </p>
+        <p class="byline">— Vrishaank Mishra</p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-brand">
+      <img src="assets/logo.svg" alt="MeSA 2.0" height="28" />
+      <p>Right medication. On time. Safe at home.</p>
+    </div>
+    <nav class="footer-links">
+      <a href="https://github.com/VrishaankMishra/mesa-ai-robot" target="_blank" rel="noopener">GitHub</a>
+      <a href="#" data-youtube-link target="_blank" rel="noopener">YouTube</a>
+      <a href="#top">Back to top ↑</a>
+    </nav>
+    <p class="fineprint">© <span id="year"></span> Vrishaank Mishra · MeSA is an assistive aid, not a medical device.</p>
+  </footer>
+
+  <script>
+    document.getElementById("year").textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>

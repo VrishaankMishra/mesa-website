@@ -1,0 +1,15 @@
+<svg width="220" height="64" viewBox="0 0 220 64" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="MeSA 2.0">
+  <!-- Mark: circle (camera/eye) containing a capsule (pill) -->
+  <g fill="none" stroke="#14110F" stroke-width="3">
+    <circle cx="32" cy="32" r="22"/>
+  </g>
+  <g transform="rotate(-35 32 32)">
+    <rect x="23" y="24.5" width="18" height="15" rx="7.5" fill="#14110F"/>
+    <rect x="32" y="24.5" width="9" height="15" rx="0" fill="#14110F"/>
+    <rect x="23" y="24.5" width="18" height="15" rx="7.5" fill="none" stroke="#FBFAF8" stroke-width="0"/>
+    <line x1="32" y1="24.5" x2="32" y2="39.5" stroke="#FBFAF8" stroke-width="2"/>
+  </g>
+  <!-- Wordmark -->
+  <text x="68" y="42" font-family="Fraunces, Georgia, serif" font-size="34" font-weight="600" fill="#14110F">MeSA</text>
+  <text x="174" y="42" font-family="Inter, system-ui, sans-serif" font-size="20" font-weight="400" fill="#6B6660">2.0</text>
+</svg>
