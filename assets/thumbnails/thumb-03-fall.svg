@@ -1,0 +1,14 @@
+<svg width="1280" height="720" viewBox="0 0 1280 720" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="MeSA 2.0 — Fall detection">
+  <rect width="1280" height="720" fill="#FBFAF8"/>
+  <rect x="24" y="24" width="1232" height="672" fill="none" stroke="#E5E1DB" stroke-width="2"/>
+  <g transform="translate(72,66)">
+    <circle cx="18" cy="18" r="17" fill="none" stroke="#14110F" stroke-width="2.5"/>
+    <g transform="rotate(-35 18 18)"><rect x="10.5" y="11.5" width="15" height="13" rx="6.5" fill="#14110F"/><line x1="18" y1="11.5" x2="18" y2="24.5" stroke="#FBFAF8" stroke-width="1.6"/></g>
+    <text x="46" y="26" font-family="Fraunces, Georgia, serif" font-size="26" font-weight="600" fill="#14110F">MeSA</text>
+    <text x="132" y="26" font-family="Inter, Arial, sans-serif" font-size="17" fill="#6B6660">2.0</text>
+  </g>
+  <text x="1208" y="252" text-anchor="end" font-family="Fraunces, Georgia, serif" font-size="240" font-weight="600" fill="#EDEAE4">03</text>
+  <rect x="74" y="372" width="72" height="7" fill="#1C6B47"/>
+  <text x="70" y="500" font-family="Fraunces, Georgia, serif" font-size="140" font-weight="500" fill="#14110F">Fall</text>
+  <text x="74" y="570" font-family="Inter, Arial, sans-serif" font-size="34" fill="#6B6660">Knowing when someone is down.</text>
+</svg>
