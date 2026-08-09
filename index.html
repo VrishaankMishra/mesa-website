@@ -28,6 +28,7 @@
       <a href="#how">How it works</a>
       <a href="#demo">Demo</a>
       <a href="#results">Results</a>
+      <a href="#research">Research</a>
       <a class="nav-cta" href="https://github.com/VrishaankMishra/mesa-ai-robot" target="_blank" rel="noopener">GitHub ↗</a>
     </nav>
   </header>
@@ -48,11 +49,11 @@
       </div>
       <p class="disclaimer">An assistive aid, not a medical device.</p>
 
-      <!-- Replace this placeholder with a muted autoplay loop or hero photo after filming -->
-      <figure class="hero-media" aria-label="MeSA prototype">
-        <div class="media-placeholder">
-          <span>Hero shot / 30s silent loop of the assembled robot</span>
-        </div>
+      <figure class="hero-media" aria-label="MeSA hardware tour">
+        <video autoplay muted loop playsinline preload="metadata" style="width:100%;border-radius:12px;display:block;">
+          <source src="assets/setup-tour.mp4" type="video/mp4" />
+        </video>
+        <figcaption class="caption">The real rig: Raspberry Pi 5, one webcam, a marked medication station, and a $10 lamp that turned out to matter.</figcaption>
       </figure>
     </section>
 
@@ -148,12 +149,34 @@ USB mic ─▶ Audio   (Vosk STT · pyttsx3 TTS)          ├─▶  Decision en
       <p class="section-label">Results</p>
       <h2>Measured, not claimed.</h2>
       <div class="stats">
-        <div class="stat"><span class="stat-num" data-placeholder>≥90%</span><span class="stat-label">detection mAP@50</span></div>
-        <div class="stat"><span class="stat-num" data-placeholder>≥90%</span><span class="stat-label">posture accuracy</span></div>
-        <div class="stat"><span class="stat-num" data-placeholder>5+ FPS</span><span class="stat-label">on Raspberry Pi 5</span></div>
-        <div class="stat"><span class="stat-num" data-placeholder>100%</span><span class="stat-label">offline / on-device</span></div>
+        <div class="stat"><span class="stat-num">0.953</span><span class="stat-label">detection mAP@50, held-out test</span></div>
+        <div class="stat"><span class="stat-num">20.7 FPS</span><span class="stat-label">live posture on the Pi 5</span></div>
+        <div class="stat"><span class="stat-num">4 / 5</span><span class="stat-label">core demos live-verified</span></div>
+        <div class="stat"><span class="stat-num">100%</span><span class="stat-label">offline / on-device</span></div>
       </div>
-      <p class="caption">Numbers are demo targets; replace with measured results from the evaluation report.</p>
+      <p class="caption">Measured on real hardware, Aug 2026 — full evaluation data and per-frame results are in the open repository.</p>
+    </section>
+
+    <!-- RESEARCH -->
+    <section class="band" id="research">
+      <div class="col-narrow">
+        <p class="section-label">The research</p>
+        <h2>The robot that measured its own blind spots.</h2>
+        <p>
+          MeSA's detector scored 0.953 on its held-out test set — then failed at 8 PM in
+          its own room. Instead of hiding that, MeSA became the instrument: a voice-guided
+          protocol where scripted placement makes ground truth free produced
+          <strong>1,728 labeled field evaluations across an 8-condition lighting grid</strong>,
+          with zero manual annotation. Findings: detection collapses at <em>both</em> lighting
+          extremes (direct sun is worse than near-darkness), which containers fail is set by
+          their reflectance, a $10 LED lamp restores near-dark detection from 38–71% to
+          92–100% — and the "free" synthetic-data fix made things worse.
+        </p>
+      </div>
+      <figure class="video-frame" style="margin-top:1.5rem;">
+        <img src="assets/heatmap.png" alt="Detection rate per medication across 8 lighting conditions" style="width:100%;border-radius:12px;display:block;" loading="lazy" />
+        <figcaption class="caption">Detection rate (%) per medication across the lighting day. Paper preprint forthcoming.</figcaption>
+      </figure>
     </section>
 
     <!-- ABOUT -->
@@ -164,7 +187,8 @@ USB mic ─▶ Audio   (Vosk STT · pyttsx3 TTS)          ├─▶  Decision en
         <p>
           MeSA 2.0 is an independent engineering project: dataset collection and model
           training, an offline voice assistant, a real-time decision engine, and a robot
-          built on a Raspberry Pi — designed, coded, and assembled from scratch.
+          built on a Raspberry Pi — designed, built, and tested end to end by one student,
+          pair-programming with an AI assistant and backed by a very patient family.
         </p>
         <p class="byline">— Vrishaank Mishra</p>
       </div>
@@ -178,7 +202,6 @@ USB mic ─▶ Audio   (Vosk STT · pyttsx3 TTS)          ├─▶  Decision en
     </div>
     <nav class="footer-links">
       <a href="https://github.com/VrishaankMishra/mesa-ai-robot" target="_blank" rel="noopener">GitHub</a>
-      <a href="#" data-youtube-link target="_blank" rel="noopener">YouTube</a>
       <a href="#top">Back to top ↑</a>
     </nav>
     <p class="fineprint">© <span id="year"></span> Vrishaank Mishra · MeSA is an assistive aid, not a medical device.</p>
