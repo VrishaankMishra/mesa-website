@@ -10,7 +10,7 @@ generous whitespace, understated. Reads as a serious engineering project.
 
 - **Product name:** MeSA 2.0
 - **Full name:** MeSA — Medication & Safety Assistant
-- **Pronounced:** "MEH-sa"
+- **Pronounced:** "MAY-suh" (the wake word is tuned to this; MEH-sa was wrong)
 - **Category:** assistive home-care robot
 
 **Tagline (primary):**
