@@ -130,17 +130,56 @@ USB mic ─▶ Audio   (Vosk STT · pyttsx3 TTS)          ├─▶  Decision en
     <section class="band" id="demo">
       <p class="section-label">Demo</p>
       <h2>See it run.</h2>
-      <figure class="video-frame">
-        <!-- After uploading to YouTube, replace with:
-             <iframe src="https://www.youtube.com/embed/VIDEO_ID" title="MeSA 2.0 demo"
+      <p class="lede col-narrow">
+        Six clips from one live run on October 24, 2026 — a different room from the one the
+        study was measured in. Nothing staged beyond the cushions.
+      </p>
+      <div class="demo-grid">
+        <figure class="demo-card">
+          <video controls preload="metadata" playsinline poster="assets/thumbnails/thumb-01-detection.png">
+            <source src="assets/clips/01-detection.mp4" type="video/mp4" />
+          </video>
+          <figcaption><strong>01 · It sees.</strong> A bottle leaves the table and comes back; the robot recognises it by sight, no barcode.</figcaption>
+        </figure>
+        <figure class="demo-card">
+          <video controls preload="metadata" playsinline poster="assets/thumbnails/thumb-02-logging.png">
+            <source src="assets/clips/02-logging.mp4" type="video/mp4" />
+          </video>
+          <figcaption><strong>02 · It remembers.</strong> A dose logged to the dashboard — nobody typed anything.</figcaption>
+        </figure>
+        <figure class="demo-card">
+          <video controls preload="metadata" playsinline poster="assets/thumbnails/thumb-06-wrong-medication.png">
+            <source src="assets/clips/06-wrong-medication.mp4" type="video/mp4" />
+          </video>
+          <figcaption><strong>03 · It says when it doesn't know.</strong> A bottle it was never trained on: "That bottle isn't one of your medications."</figcaption>
+        </figure>
+        <figure class="demo-card">
+          <video controls preload="metadata" playsinline poster="assets/thumbnails/thumb-03-fall.png">
+            <source src="assets/clips/03-fall.mp4" type="video/mp4" />
+          </video>
+          <figcaption><strong>04 · It asks.</strong> Thirty seconds lying still, a spoken check-in, and "I am okay" clears it.</figcaption>
+        </figure>
+        <figure class="demo-card">
+          <video controls preload="metadata" playsinline poster="assets/thumbnails/thumb-05-escalation.png">
+            <source src="assets/clips/05-escalation.mp4" type="video/mp4" />
+          </video>
+          <figcaption><strong>05 · It calls.</strong> No answer for a minute, and the caregiver's phone gets the alert.</figcaption>
+        </figure>
+        <figure class="demo-card">
+          <video controls preload="metadata" playsinline poster="assets/thumbnails/thumb-04-voice.png">
+            <source src="assets/clips/04-voice.mp4" type="video/mp4" />
+          </video>
+          <figcaption><strong>06 · It answers.</strong> "What is my next medication?" — "Did I take my Advil today?"</figcaption>
+        </figure>
+      </div>
+      <figure class="video-frame" id="flagship">
+        <!-- Flagship: after uploading to YouTube, replace with:
+             <iframe src="https://www.youtube.com/embed/VIDEO_ID" title="MeSA 2.0 — the full story"
                      allowfullscreen loading="lazy"></iframe> -->
-        <div class="media-placeholder media-16x9">
-          <span>Main 3–4 min demo video (embed YouTube here)</span>
-        </div>
       </figure>
       <p class="caption col-narrow">
-        The full walkthrough shows all five capabilities live: detection, dose logging, fall
-        check-in, voice commands, and the caregiver escalation.
+        Assistive aid, not a medical device. Falls are staged on cushions. The robot watches the
+        bottles, not the person; no video leaves the device.
       </p>
     </section>
 
@@ -151,7 +190,7 @@ USB mic ─▶ Audio   (Vosk STT · pyttsx3 TTS)          ├─▶  Decision en
       <div class="stats">
         <div class="stat"><span class="stat-num">0.953</span><span class="stat-label">detection mAP@50, held-out test</span></div>
         <div class="stat"><span class="stat-num">20.7 FPS</span><span class="stat-label">live posture on the Pi 5</span></div>
-        <div class="stat"><span class="stat-num">4 / 5</span><span class="stat-label">core demos live-verified</span></div>
+        <div class="stat"><span class="stat-num">5 / 5</span><span class="stat-label">core demos live, on one recording</span></div>
         <div class="stat"><span class="stat-num">100%</span><span class="stat-label">offline / on-device</span></div>
       </div>
       <p class="caption">Measured on real hardware, Aug 2026 — full evaluation data and per-frame results are in the open repository.</p>
