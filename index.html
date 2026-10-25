@@ -178,7 +178,11 @@ USB mic ─▶ Audio   (Vosk STT · pyttsx3 TTS)          ├─▶  Decision en
         </figure>
       </div>
       <figure class="video-frame" id="flagship">
-        <!-- Flagship: after uploading to YouTube, replace with:
+        <video controls preload="metadata" playsinline poster="assets/thumbnails/thumb-00-main.png" style="width:100%;aspect-ratio:16/9;border-radius:12px;display:block;background:#111;">
+          <source src="assets/clips/00-live-demo-compilation.mp4" type="video/mp4" />
+        </video>
+        <figcaption class="caption">The whole run in one piece, 3:12 — six capabilities, one recording, no narration: the robot's own voice carries it.</figcaption>
+        <!-- The long-form video goes here when it exists:
              <iframe src="https://www.youtube.com/embed/VIDEO_ID" title="MeSA 2.0 — the full story"
                      allowfullscreen loading="lazy"></iframe> -->
       </figure>
@@ -193,7 +197,7 @@ USB mic ─▶ Audio   (Vosk STT · pyttsx3 TTS)          ├─▶  Decision en
       <p class="section-label">Results</p>
       <h2>Measured, not claimed.</h2>
       <div class="stats">
-        <div class="stat"><span class="stat-num">0.953</span><span class="stat-label">detection mAP@50, held-out test</span></div>
+        <div class="stat"><span class="stat-num">0.953</span><span class="stat-label">detection mAP@50, held-out test (v1 weights)</span></div>
         <div class="stat"><span class="stat-num">20.7 FPS</span><span class="stat-label">live posture on the Pi 5</span></div>
         <div class="stat"><span class="stat-num">5 / 5</span><span class="stat-label">core demos live, on one recording</span></div>
         <div class="stat"><span class="stat-num">100%</span><span class="stat-label">offline / on-device</span></div>
