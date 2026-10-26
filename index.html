@@ -26,6 +26,7 @@
     <nav class="nav">
       <a href="#what">What it does</a>
       <a href="#how">How it works</a>
+      <a href="architecture.html">How it's built</a>
       <a href="#demo">Demo</a>
       <a href="#results">Results</a>
       <a href="#research">Research</a>
@@ -120,16 +121,137 @@
         a decision engine consumes them and drives compliance tracking, fall detection, and
         escalation. Everything is local — no cloud, no account, no data leaving the home.
       </p>
-      <pre class="diagram" aria-label="System architecture">
-USB cam ─▶ Vision  (YOLOv8 detect · MediaPipe pose) ─┐
-USB mic ─▶ Audio   (Vosk STT · pyttsx3 TTS)          ├─▶  Decision engine  ─┬─▶ SQLite log
-                                                     │                      ├─▶ Live dashboard
-                                                     └──────────────────────┴─▶ Caregiver alert
-      </pre>
+      <figure class="arch-figure">
+<svg class="arch-svg" viewBox="0 0 1000 400" role="img" aria-labelledby="arch-title" xmlns="http://www.w3.org/2000/svg">
+  <title id="arch-title">MeSA 2.0 architecture: camera and microphone feed two worker threads, which publish events to one queue; the decision engine reads it and writes the log, the dashboard, the caregiver alert and the speaker.</title>
+  <defs>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,1 L9,5 L0,9 z" fill="currentColor"/>
+    </marker>
+  </defs>
+  <g font-family="Inter, system-ui, sans-serif" fill="currentColor">
+    <!-- column labels -->
+    <g font-size="10.5" letter-spacing="1.6" fill="#6B6660" text-anchor="middle">
+      <text x="85" y="28">INPUTS</text>
+      <text x="330" y="28">WORKER THREADS</text>
+      <text x="548" y="28">EVENT QUEUE</text>
+      <text x="735" y="28">DECISION ENGINE</text>
+      <text x="920" y="28">OUTPUTS</text>
+    </g>
+
+    <!-- inputs -->
+    <g stroke="currentColor" stroke-width="1.2" fill="#fff">
+      <rect x="12" y="100" width="146" height="56" rx="8"/>
+      <rect x="12" y="236" width="146" height="56" rx="8"/>
+    </g>
+    <g font-size="14" font-weight="600" text-anchor="middle">
+      <text x="85" y="124">USB camera</text>
+      <text x="85" y="260">USB speakerphone</text>
+    </g>
+    <g font-size="11" fill="#6B6660" text-anchor="middle">
+      <text x="85" y="142">640 × 480</text>
+      <text x="85" y="278">mic + speaker</text>
+    </g>
+
+    <!-- workers -->
+    <g stroke="currentColor" stroke-width="1.2" fill="#fff">
+      <rect x="215" y="72" width="230" height="112" rx="8"/>
+      <rect x="215" y="208" width="230" height="112" rx="8"/>
+    </g>
+    <g font-size="14" font-weight="600">
+      <text x="232" y="98">Vision thread</text>
+      <text x="232" y="234">Audio thread</text>
+    </g>
+    <g font-size="11.5" fill="#6B6660">
+      <text x="232" y="120">OpenCV capture</text>
+      <text x="232" y="138">YOLOv8n detection, every 3rd frame</text>
+      <text x="232" y="156">MediaPipe pose, every frame</text>
+      <text x="232" y="174">posture · presence · unknown bottle</text>
+      <text x="232" y="256">push-to-talk window</text>
+      <text x="232" y="274">Vosk speech to text, offline</text>
+      <text x="232" y="292">intent parser</text>
+      <text x="232" y="310">pyttsx3 text to speech</text>
+    </g>
+
+    <!-- queue -->
+    <rect x="500" y="72" width="96" height="248" rx="8" fill="#fff" stroke="#1C6B47" stroke-width="1.6"/>
+    <g font-size="14" font-weight="600" text-anchor="middle">
+      <text x="548" y="100">Event</text>
+      <text x="548" y="118">queue</text>
+    </g>
+    <g font-size="10.5" fill="#6B6660" text-anchor="middle">
+      <text x="548" y="150">bottle</text>
+      <text x="548" y="163">observation</text>
+      <text x="548" y="186">posture</text>
+      <text x="548" y="209">presence</text>
+      <text x="548" y="222">check</text>
+      <text x="548" y="245">help</text>
+      <text x="548" y="258">request</text>
+      <text x="548" y="281">acknowledge</text>
+      <text x="548" y="304">in order</text>
+    </g>
+
+    <!-- engine -->
+    <rect x="650" y="72" width="170" height="248" rx="8" fill="#fff" stroke="currentColor" stroke-width="1.2"/>
+    <g font-size="14" font-weight="600">
+      <text x="667" y="100">Decision engine</text>
+    </g>
+    <g font-size="11.5" fill="#6B6660">
+      <text x="667" y="130">compliance tracker</text>
+      <text x="667" y="146">taken after 10 s away</text>
+      <text x="667" y="176">fall monitor</text>
+      <text x="667" y="192">lying 30 s → check-in</text>
+      <text x="667" y="222">inactivity monitor</text>
+      <text x="667" y="252">escalation</text>
+      <text x="667" y="268">L1 ask → L2 push → L3</text>
+      <text x="667" y="298">one config.yaml</text>
+    </g>
+
+    <!-- outputs -->
+    <g stroke="currentColor" stroke-width="1.2" fill="#fff">
+      <rect x="860" y="52" width="120" height="48" rx="8"/>
+      <rect x="860" y="124" width="120" height="48" rx="8"/>
+      <rect x="860" y="196" width="120" height="48" rx="8"/>
+      <rect x="860" y="268" width="120" height="48" rx="8"/>
+    </g>
+    <g font-size="13" font-weight="600" text-anchor="middle">
+      <text x="920" y="72">SQLite log</text>
+      <text x="920" y="144">Dashboard</text>
+      <text x="920" y="216">Caregiver push</text>
+      <text x="920" y="288">Speaker · face</text>
+    </g>
+    <g font-size="10.5" fill="#6B6660" text-anchor="middle">
+      <text x="920" y="88">events.db</text>
+      <text x="920" y="160">Streamlit, home Wi-Fi</text>
+      <text x="920" y="232">ntfy.sh, HTTPS</text>
+      <text x="920" y="304">OLED, pan/tilt head</text>
+    </g>
+
+    <!-- arrows -->
+    <g stroke="currentColor" stroke-width="1.3" fill="none" marker-end="url(#arr)">
+      <path d="M158,128 L215,128"/>
+      <path d="M158,264 L215,264"/>
+      <path d="M445,128 L500,128"/>
+      <path d="M445,264 L500,264"/>
+      <path d="M596,196 L650,196"/>
+      <path d="M820,120 C840,120 840,76 860,76"/>
+      <path d="M820,170 C840,170 840,148 860,148"/>
+      <path d="M820,222 C840,222 840,220 860,220"/>
+      <path d="M820,272 C840,272 840,292 860,292"/>
+    </g>
+    <!-- spoken replies go back out through the audio thread -->
+    <path d="M820,300 C840,300 840,350 548,350 C300,350 300,320 330,320" stroke="#6B6660" stroke-width="1" fill="none" stroke-dasharray="4 4" marker-end="url(#arr)"/>
+    <text x="548" y="366" font-size="10.5" fill="#6B6660" text-anchor="middle">spoken replies and check-ins go back out through the audio thread</text>
+  </g>
+</svg>
+      </figure>
       <ul class="tech-tags">
         <li>Python</li><li>YOLOv8</li><li>MediaPipe</li><li>Vosk</li><li>SQLite</li>
         <li>Streamlit</li><li>Raspberry Pi 5</li><li>Offline</li>
       </ul>
+      <div class="cta-row">
+        <a class="btn btn-ghost" href="architecture.html">Every subsystem, library and part →</a>
+      </div>
     </section>
 
     <!-- DEMO -->
@@ -215,17 +337,35 @@ USB mic ─▶ Audio   (Vosk STT · pyttsx3 TTS)          ├─▶  Decision en
           MeSA's detector scored 0.953 on its held-out test set — then failed at 8 PM in
           its own room. Instead of hiding that, MeSA became the instrument: a voice-guided
           protocol where scripted placement makes ground truth free produced
-          <strong>1,584 labeled field evaluations across an 8-condition lighting grid</strong>,
-          with zero manual annotation. Findings: detection collapses at <em>both</em> lighting
-          extremes (direct sun is worse than near-darkness), which containers fail is set by
-          their reflectance, a $10 LED lamp lifts the dark-labeled bottles from 41–77% to
-          95–100% (though it can't rescue the smallest one, and costs the one already
-          doing well) — and the "free" synthetic-data fix made things worse.
+          <strong>1,584 labeled field evaluations across an 8-condition lighting grid</strong>
+          in that room, with zero manual annotation. Findings: detection collapses at
+          <em>both</em> lighting extremes (direct sun is worse than near-darkness), which
+          containers fail is set by their reflectance, a $10 LED lamp lifts the dark-labeled
+          bottles from 41–77% to 95–100% (though it can't rescue the smallest one, and costs
+          the one already doing well) — and the "free" synthetic-data fix made things worse.
         </p>
       </div>
       <figure class="video-frame" style="margin-top:1.5rem;">
-        <img src="assets/heatmap.png" alt="Detection rate per medication across 8 lighting conditions" style="width:100%;border-radius:12px;display:block;" loading="lazy" />
-        <figcaption class="caption">Detection rate (%) per medication across the lighting day. Paper preprint forthcoming.</figcaption>
+        <img src="assets/heatmap.png" alt="Detection rate per medication across 8 lighting conditions in the first room" style="width:100%;border-radius:12px;display:block;" loading="lazy" />
+        <figcaption class="caption">The first room: detection rate (%) per medication across the lighting day, deployed model, 22 frames per cell.</figcaption>
+      </figure>
+      <div class="col-narrow" style="margin-top:2.5rem;">
+        <h3>Then the same protocol ran in a second room.</h3>
+        <p>
+          October 2026, a different room of the same house: a grey folding table instead of
+          the white desk, a patterned rug behind the far mark, a window beside the camera.
+          Four of the eight lighting conditions were repeated there, 1,386 scored frames per
+          model arm, 2,970 across both rooms. The detector that reached 97% in its own room
+          was lower in <strong>24 of the 32 condition-by-medication cells</strong>, by margins
+          the 95% intervals exclude: the worst condition fell from 65% to 28% pooled, the best
+          from 97% to 62%, and the white bottles on the grey table were the casualties. The lamp
+          still helped in the dark, +11 points, but hurt at midday, −15. Same robot, same
+          weights, next room over.
+        </p>
+      </div>
+      <figure class="video-frame" style="margin-top:1.5rem;">
+        <a href="assets/heatmap-two-site.png" target="_blank" rel="noopener"><img src="assets/heatmap-two-site.png" alt="Three heatmaps: detection rate per medication in the first room, in the second room, and the difference between them, starred where significant" style="width:100%;border-radius:12px;display:block;" loading="lazy" /></a>
+        <figcaption class="caption">Both rooms, the four shared conditions, deployed model, 22 frames per cell. Left: the first room. Middle: the second. Right: the difference in points, starred where the 95% interval excludes zero. Click to open full size.</figcaption>
       </figure>
     </section>
 
@@ -274,6 +414,7 @@ USB mic ─▶ Audio   (Vosk STT · pyttsx3 TTS)          ├─▶  Decision en
     </div>
     <nav class="footer-links">
       <a href="https://github.com/VrishaankMishra/mesa-ai-robot" target="_blank" rel="noopener">GitHub</a>
+      <a href="architecture.html">How it's built</a>
       <a href="tldr.html">TLDR; Robotics Discovery Lab</a>
       <a href="#top">Back to top ↑</a>
     </nav>
