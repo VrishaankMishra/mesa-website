@@ -319,3 +319,6 @@ code { font-family: var(--mono); font-size: 0.88em; background: #fff; border: 1p
 .album-gallery .chapter { text-align: center; }
 .album-close .chapter { margin-top: 2.25rem; }
 .album-close .chapter:first-child { margin-top: 0; }
+
+/* lead photo under the hero */
+.album-lead { margin: 0 auto clamp(1.75rem, 5vw, 2.75rem); width: clamp(220px, 50vw, 320px); }
