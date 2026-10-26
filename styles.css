@@ -280,8 +280,36 @@ code { font-family: var(--mono); font-size: 0.88em; background: #fff; border: 1p
 .album-close { max-width: 60ch; margin: clamp(2.5rem, 6vw, 4rem) auto 0; }
 .album-close .cta-row { margin-top: 1.5rem; }
 .story-punch { font-family: var(--serif); font-size: clamp(1.3rem, 3vw, 1.7rem); margin: 1.5rem 0 0.5rem; }
+/* My Journey — youthful Comic Sans + multi-colour highlights */
+.story-page { font-family: "Comic Sans MS", "Comic Neue", "Chalkboard SE", cursive; }
+.story-page h1, .story-page h2, .story-page h3 {
+  font-family: "Comic Sans MS", "Comic Neue", "Chalkboard SE", cursive;
+  letter-spacing: 0; font-weight: 700;
+}
+
+.hl {
+  --hl: rgba(255, 214, 10, 0.55);
+  background: var(--hl);
+  padding: 0.05em 0.14em; margin: 0 -0.04em; border-radius: 3px;
+  color: inherit; font-weight: 600;
+  -webkit-box-decoration-break: clone; box-decoration-break: clone;
+}
+.hl-y { --hl: rgba(255, 214, 10, 0.62); }
+.hl-p { --hl: rgba(255, 110, 180, 0.42); }
+.hl-b { --hl: rgba(90, 200, 250, 0.50); }
+.hl-g { --hl: rgba(150, 225, 90, 0.58); }
+.hl-o { --hl: rgba(255, 150, 60, 0.52); }
+.hl-v { --hl: rgba(190, 125, 255, 0.44); }
+.hl-t { --hl: rgba(45, 212, 191, 0.52); }
 
 @media (max-width: 720px) {
   .album-row { grid-template-columns: 1fr; gap: 1.25rem; }
   .album-row:nth-child(even) .album-text { order: 0; }
 }
+
+/* a wide gallery row — several photos flow across instead of stacking */
+.album-row.album-gallery { display: block; }
+.album-gallery .album-text { max-width: 62ch; margin: 0 auto 1.75rem; }
+.album-gallery .album-photos { justify-content: center; }
+.album-gallery .polaroid { width: clamp(148px, 24vw, 190px); }
+.album-gallery .polaroid figcaption { font-size: 1.05rem; }
