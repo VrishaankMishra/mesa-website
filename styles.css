@@ -154,3 +154,53 @@ main { max-width: var(--maxw); margin: 0 auto; padding: 0 var(--gutter); }
 .demo-card figcaption { font-size: 0.92rem; line-height: 1.45; margin-top: 0.6rem; opacity: 0.9; }
 @media (max-width: 900px) { .demo-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 560px) { .demo-grid { grid-template-columns: 1fr; } }
+
+/* ---------- TLDR; Robotics Discovery Lab (child page, tldr.html) ---------- */
+.tldr-page { --tldr-teal: #0F8B8D; --tldr-orange: #E8762B; }
+.tldr-r { color: var(--tldr-teal); }
+.tldr-hero-grid { display: grid; grid-template-columns: 1fr auto; gap: 2rem 3rem; align-items: center; }
+.tldr-logo-card {
+  margin: 0; background: #fff; border: 1px solid var(--hairline); border-radius: 16px;
+  padding: 1.25rem 1.5rem; display: grid; place-items: center;
+}
+.tldr-logo-card img { width: 220px; height: auto; display: block; }
+.tldr-triad { display: flex; gap: 1.25rem; margin: 1.25rem 0 0; font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.16em; color: var(--muted); }
+.tldr-triad span::before { content: "○ "; color: var(--tldr-teal); }
+@media (max-width: 720px) { .tldr-hero-grid { grid-template-columns: 1fr; } .tldr-logo-card { justify-self: start; } }
+
+.tldr-story { display: grid; grid-template-columns: minmax(0, 1fr) clamp(260px, 36%, 380px); gap: 2rem 3rem; align-items: start; }
+.tldr-photo { margin: 0; }
+.tldr-photo img { width: 100%; border-radius: 12px; display: block; border: 1px solid var(--hairline); }
+.tldr-photo figcaption { margin-top: 0.6rem; }
+.tldr-photo-wide { margin: 2.5rem 0 0; }
+.tldr-photo-wide img { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; border-radius: 12px; display: block; }
+.tldr-photo-wide figcaption { margin-top: 0.6rem; }
+@media (max-width: 720px) { .tldr-story { grid-template-columns: 1fr; } }
+
+.tldr-weeks { list-style: none; margin: 1.5rem 0 1rem; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1rem; }
+.tldr-weeks li { border: 1px solid var(--hairline); border-radius: 12px; padding: 1.25rem; background: #fff; }
+.tldr-weeks h3 { margin: 0.75rem 0 0.25rem; }
+.tldr-weeks p { margin: 0; color: var(--muted); font-size: 0.95rem; }
+.tldr-week-num {
+  display: inline-grid; place-items: center; width: 2rem; height: 2rem; border-radius: 999px;
+  background: var(--tldr-teal); color: #fff; font-family: var(--mono); font-size: 0.9rem;
+}
+.tldr-week-num--accent { background: var(--tldr-orange); }
+@media (max-width: 900px) { .tldr-weeks { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 480px) { .tldr-weeks { grid-template-columns: 1fr; } }
+
+.tldr-stats { margin-bottom: 1.25rem; }
+.tldr-why { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.5rem; margin-top: 2rem; }
+.tldr-why h3 { padding-top: 0.75rem; border-top: 2px solid var(--tldr-teal); }
+.tldr-why div:nth-child(2) h3 { border-color: var(--tldr-orange); }
+.tldr-why div:nth-child(3) h3 { border-color: var(--accent); }
+.tldr-why p { color: var(--muted); font-size: 0.95rem; }
+@media (max-width: 720px) { .tldr-why { grid-template-columns: 1fr; } }
+
+.tldr-creds { margin: 0 0 1rem; padding-left: 1.2rem; }
+.tldr-creds li { margin: 0.2rem 0; }
+
+/* Community teaser on the landing page */
+.community-grid { display: grid; grid-template-columns: minmax(0, 1fr) clamp(260px, 36%, 380px); gap: 2rem 3rem; align-items: center; }
+.community-photo img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 12px; display: block; border: 1px solid var(--hairline); }
+@media (max-width: 720px) { .community-grid { grid-template-columns: 1fr; } }
