@@ -313,3 +313,9 @@ code { font-family: var(--mono); font-size: 0.88em; background: #fff; border: 1p
 .album-gallery .album-photos { justify-content: center; }
 .album-gallery .polaroid { width: clamp(148px, 24vw, 190px); }
 .album-gallery .polaroid figcaption { font-size: 1.05rem; }
+
+/* chapter titles on each beat */
+.chapter { font-size: clamp(1.2rem, 3vw, 1.65rem); margin: 0 0 0.55rem; line-height: 1.12; }
+.album-gallery .chapter { text-align: center; }
+.album-close .chapter { margin-top: 2.25rem; }
+.album-close .chapter:first-child { margin-top: 0; }
