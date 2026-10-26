@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>How MeSA 2.0 is built — architecture and stack</title>
+  <meta name="description" content="The architecture of MeSA 2.0: one Python process on a Raspberry Pi 5, two worker threads, one event queue, and the open-source libraries behind each subsystem, with versions and the numbers that matter." />
+
+  <meta property="og:title" content="How MeSA 2.0 is built" />
+  <meta property="og:description" content="One small computer, one event loop, and the open-source libraries behind each part." />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="assets/og-image.png" />
+
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body class="arch-page">
+  <header class="site-header">
+    <a class="brand" href="index.html" aria-label="MeSA 2.0 home">
+      <img src="assets/logo.svg" alt="MeSA 2.0" height="32" />
+    </a>
+    <nav class="nav">
+      <a href="#shape">The shape of it</a>
+      <a href="#subsystems">Subsystems</a>
+      <a href="#hardware">Hardware</a>
+      <a href="#practice">How it's developed</a>
+      <a class="nav-cta" href="https://github.com/VrishaankMishra/mesa-ai-robot" target="_blank" rel="noopener">GitHub ↗</a>
+    </nav>
+  </header>
+
+  <main id="top">
+    <!-- HERO -->
+    <section class="hero">
+      <p class="eyebrow"><a href="index.html">MeSA 2.0</a> · architecture and stack</p>
+      <h1>How it's built.</h1>
+      <p class="lede">
+        One Python process on a Raspberry Pi 5. Two worker threads watch the camera and
+        the microphone and publish events onto one queue. A decision engine reads the
+        queue and decides what to log, say, or send. Nothing leaves the house.
+      </p>
+      <div class="cta-row">
+        <a class="btn btn-primary" href="#subsystems">The subsystems</a>
+        <a class="btn btn-ghost" href="https://github.com/VrishaankMishra/mesa-ai-robot" target="_blank" rel="noopener">Read the code ↗</a>
+      </div>
+    </section>
+
+    <!-- SHAPE -->
+    <section class="band" id="shape">
+      <p class="section-label">The shape of it</p>
+      <h2>One process, one queue.</h2>
+      <p class="col-narrow">
+        There is no message broker, no network between parts, no cloud. The vision thread
+        and the audio thread put typed events on a queue; the engine takes them off in
+        order and advances its state machines using each event's own clock, which is also
+        what makes the timers testable with simulated time instead of sleeps.
+      </p>
+      <figure class="arch-figure">
+<svg class="arch-svg" viewBox="0 0 1000 400" role="img" aria-labelledby="arch-title" xmlns="http://www.w3.org/2000/svg">
+  <title id="arch-title">MeSA 2.0 architecture: camera and microphone feed two worker threads, which publish events to one queue; the decision engine reads it and writes the log, the dashboard, the caregiver alert and the speaker.</title>
+  <defs>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,1 L9,5 L0,9 z" fill="currentColor"/>
+    </marker>
+  </defs>
+  <g font-family="Inter, system-ui, sans-serif" fill="currentColor">
+    <!-- column labels -->
+    <g font-size="10.5" letter-spacing="1.6" fill="#6B6660" text-anchor="middle">
+      <text x="85" y="28">INPUTS</text>
+      <text x="330" y="28">WORKER THREADS</text>
+      <text x="548" y="28">EVENT QUEUE</text>
+      <text x="735" y="28">DECISION ENGINE</text>
+      <text x="920" y="28">OUTPUTS</text>
+    </g>
+
+    <!-- inputs -->
+    <g stroke="currentColor" stroke-width="1.2" fill="#fff">
+      <rect x="12" y="100" width="146" height="56" rx="8"/>
+      <rect x="12" y="236" width="146" height="56" rx="8"/>
+    </g>
+    <g font-size="14" font-weight="600" text-anchor="middle">
+      <text x="85" y="124">USB camera</text>
+      <text x="85" y="260">USB speakerphone</text>
+    </g>
+    <g font-size="11" fill="#6B6660" text-anchor="middle">
+      <text x="85" y="142">640 × 480</text>
+      <text x="85" y="278">mic + speaker</text>
+    </g>
+
+    <!-- workers -->
+    <g stroke="currentColor" stroke-width="1.2" fill="#fff">
+      <rect x="215" y="72" width="230" height="112" rx="8"/>
+      <rect x="215" y="208" width="230" height="112" rx="8"/>
+    </g>
+    <g font-size="14" font-weight="600">
+      <text x="232" y="98">Vision thread</text>
+      <text x="232" y="234">Audio thread</text>
+    </g>
+    <g font-size="11.5" fill="#6B6660">
+      <text x="232" y="120">OpenCV capture</text>
+      <text x="232" y="138">YOLOv8n detection, every 3rd frame</text>
+      <text x="232" y="156">MediaPipe pose, every frame</text>
+      <text x="232" y="174">posture · presence · unknown bottle</text>
+      <text x="232" y="256">push-to-talk window</text>
+      <text x="232" y="274">Vosk speech to text, offline</text>
+      <text x="232" y="292">intent parser</text>
+      <text x="232" y="310">pyttsx3 text to speech</text>
+    </g>
+
+    <!-- queue -->
+    <rect x="500" y="72" width="96" height="248" rx="8" fill="#fff" stroke="#1C6B47" stroke-width="1.6"/>
+    <g font-size="14" font-weight="600" text-anchor="middle">
+      <text x="548" y="100">Event</text>
+      <text x="548" y="118">queue</text>
+    </g>
+    <g font-size="10.5" fill="#6B6660" text-anchor="middle">
+      <text x="548" y="150">bottle</text>
+      <text x="548" y="163">observation</text>
+      <text x="548" y="186">posture</text>
+      <text x="548" y="209">presence</text>
+      <text x="548" y="222">check</text>
+      <text x="548" y="245">help</text>
+      <text x="548" y="258">request</text>
+      <text x="548" y="281">acknowledge</text>
+      <text x="548" y="304">in order</text>
+    </g>
+
+    <!-- engine -->
+    <rect x="650" y="72" width="170" height="248" rx="8" fill="#fff" stroke="currentColor" stroke-width="1.2"/>
+    <g font-size="14" font-weight="600">
+      <text x="667" y="100">Decision engine</text>
+    </g>
+    <g font-size="11.5" fill="#6B6660">
+      <text x="667" y="130">compliance tracker</text>
+      <text x="667" y="146">taken after 10 s away</text>
+      <text x="667" y="176">fall monitor</text>
+      <text x="667" y="192">lying 30 s → check-in</text>
+      <text x="667" y="222">inactivity monitor</text>
+      <text x="667" y="252">escalation</text>
+      <text x="667" y="268">L1 ask → L2 push → L3</text>
+      <text x="667" y="298">one config.yaml</text>
+    </g>
+
+    <!-- outputs -->
+    <g stroke="currentColor" stroke-width="1.2" fill="#fff">
+      <rect x="860" y="52" width="120" height="48" rx="8"/>
+      <rect x="860" y="124" width="120" height="48" rx="8"/>
+      <rect x="860" y="196" width="120" height="48" rx="8"/>
+      <rect x="860" y="268" width="120" height="48" rx="8"/>
+    </g>
+    <g font-size="13" font-weight="600" text-anchor="middle">
+      <text x="920" y="72">SQLite log</text>
+      <text x="920" y="144">Dashboard</text>
+      <text x="920" y="216">Caregiver push</text>
+      <text x="920" y="288">Speaker · face</text>
+    </g>
+    <g font-size="10.5" fill="#6B6660" text-anchor="middle">
+      <text x="920" y="88">events.db</text>
+      <text x="920" y="160">Streamlit, home Wi-Fi</text>
+      <text x="920" y="232">ntfy.sh, HTTPS</text>
+      <text x="920" y="304">OLED, pan/tilt head</text>
+    </g>
+
+    <!-- arrows -->
+    <g stroke="currentColor" stroke-width="1.3" fill="none" marker-end="url(#arr)">
+      <path d="M158,128 L215,128"/>
+      <path d="M158,264 L215,264"/>
+      <path d="M445,128 L500,128"/>
+      <path d="M445,264 L500,264"/>
+      <path d="M596,196 L650,196"/>
+      <path d="M820,120 C840,120 840,76 860,76"/>
+      <path d="M820,170 C840,170 840,148 860,148"/>
+      <path d="M820,222 C840,222 840,220 860,220"/>
+      <path d="M820,272 C840,272 840,292 860,292"/>
+    </g>
+    <!-- spoken replies go back out through the audio thread -->
+    <path d="M820,300 C840,300 840,350 548,350 C300,350 300,320 330,320" stroke="#6B6660" stroke-width="1" fill="none" stroke-dasharray="4 4" marker-end="url(#arr)"/>
+    <text x="548" y="366" font-size="10.5" fill="#6B6660" text-anchor="middle">spoken replies and check-ins go back out through the audio thread</text>
+  </g>
+</svg>
+      </figure>
+      <p class="caption col-narrow">
+        Every threshold lives in one <code>config.yaml</code>: frame rates, confidence
+        cut-offs, debounce times, escalation waits, the alert topic. Changing behaviour
+        means editing one file, not code.
+      </p>
+    </section>
+
+    <!-- SUBSYSTEMS -->
+    <section class="band" id="subsystems">
+      <p class="section-label">Subsystems</p>
+      <h2>What each part does, and what it's built on.</h2>
+      <div class="arch-grid">
+
+        <article class="arch-card">
+          <h3>Seeing bottles</h3>
+          <p>
+            OpenCV grabs 640×480 frames. Every third frame goes to a YOLOv8n detector
+            fine-tuned on the eight medications in this house plus a "tray" class. A box
+            under 0.45 confidence is relabelled <em>unknown</em>, which is the
+            wrong-medication path. The camera's exposure, white balance and focus can be
+            locked at a station, or left on auto.
+          </p>
+          <ul class="arch-libs">
+            <li>opencv-python 4.10</li><li>ultralytics 8.2</li><li>numpy 1.26</li>
+          </ul>
+          <p class="arch-path">mesa/vision/detector.py · camera.py · worker.py</p>
+        </article>
+
+        <article class="arch-card">
+          <h3>Standing, sitting, lying</h3>
+          <p>
+            MediaPipe Pose runs on every frame. The posture label is smoothed with a
+            15-frame majority vote, leg landmarks below 0.5 visibility are ignored, and a
+            torso the model cannot see is refused rather than guessed. A body that reads
+            as lying for 30 seconds raises <em>possible_fall</em>; a dropout under 5
+            seconds does not cancel the spell. Measured at 20.7 frames per second on the Pi.
+          </p>
+          <ul class="arch-libs">
+            <li>mediapipe 0.10</li>
+          </ul>
+          <p class="arch-path">mesa/vision/pose_estimator.py · posture.py</p>
+        </article>
+
+        <article class="arch-card">
+          <h3>Was it taken?</h3>
+          <p>
+            Each bottle has its own two-state machine. A reading has to disagree for 3
+            seconds before the state flips, so a hand passing over a bottle changes
+            nothing. Absent for at least 10 seconds and then back on the table is a
+            <em>taken</em> event, timestamped and written to the database.
+          </p>
+          <ul class="arch-libs">
+            <li>Python stdlib</li>
+          </ul>
+          <p class="arch-path">mesa/engine/presence.py · compliance.py</p>
+        </article>
+
+        <article class="arch-card">
+          <h3>Talking to it</h3>
+          <p>
+            Push-to-talk instead of a wake word: a key or a GPIO button opens a 6-second
+            window. Vosk decodes offline against a grammar of about 60 phrases, so a noisy
+            room cannot produce words that were never said; names the small lexicon lacks
+            get spoken aliases. Intents cover the next dose, did-I-take, call for help,
+            the time and date, and "I am okay". Replies are spoken by pyttsx3. An
+            open-vocabulary faster-whisper engine sits behind the same interface.
+          </p>
+          <ul class="arch-libs">
+            <li>vosk 0.3.44</li><li>faster-whisper 1.2</li><li>pyttsx3 2.90</li><li>sounddevice 0.4</li>
+          </ul>
+          <p class="arch-path">mesa/audio/ptt.py · stt.py · vocabulary.py · intents.py · assistant.py · tts.py</p>
+        </article>
+
+        <article class="arch-card">
+          <h3>Deciding and escalating</h3>
+          <p>
+            The engine consumes events and drives three state machines: compliance,
+            fall, inactivity. A possible fall opens a spoken check-in and a 30-second
+            listening window that needs no button press. No answer in 60 seconds sends a
+            push to the caregiver's phone (L2); another 60 seconds raises the caregiver
+            alert (L3). "I am okay" clears it at any level. An hour with nobody seen
+            starts the same chain.
+          </p>
+          <ul class="arch-libs">
+            <li>Python stdlib</li><li>requests 2.32</li>
+          </ul>
+          <p class="arch-path">mesa/engine/decision.py · escalation.py · inactivity.py · events.py · mesa/alerts/ntfy.py</p>
+        </article>
+
+        <article class="arch-card">
+          <h3>Remembering and showing</h3>
+          <p>
+            SQLite through the standard library, three tables: events, medications,
+            schedule. A Streamlit page on the home network shows today's doses as taken or
+            due and the last fifty events. A phone on the same Wi-Fi can open it.
+          </p>
+          <ul class="arch-libs">
+            <li>sqlite3 (stdlib)</li><li>streamlit 1.38</li>
+          </ul>
+          <p class="arch-path">mesa/data/database.py · mesa/dashboard/app.py</p>
+        </article>
+
+        <article class="arch-card">
+          <h3>A face and a head</h3>
+          <p>
+            A pan/tilt servo head that keeps the person centred and a small OLED face that
+            shows the robot's state sit behind plug modules. When the libraries or the I²C
+            bus are absent, the same code runs against null drivers, so a laptop with no
+            hardware runs the whole system and its tests.
+          </p>
+          <ul class="arch-libs">
+            <li>gpiozero 2.0</li><li>adafruit-circuitpython-pca9685 3.4</li><li>adafruit-circuitpython-ssd1306 2.12</li>
+          </ul>
+          <p class="arch-path">mesa/hardware/servos.py · tracking.py · oled.py · emotions.py</p>
+        </article>
+
+        <article class="arch-card">
+          <h3>Measuring itself</h3>
+          <p>
+            A rolling buffer keeps the last seconds of per-frame features, and every real
+            <em>taken</em> event labels the window before it as a clip. The evaluation
+            scripts turn a voice-guided placement protocol into ground truth for free:
+            that is how the lighting study was collected without hand-labelling a frame.
+          </p>
+          <ul class="arch-libs">
+            <li>Python stdlib</li>
+          </ul>
+          <p class="arch-path">mesa/research/ · scripts/eval_capture.py · eval_analyze.py · eval_stats.py · eval_figures.py</p>
+        </article>
+
+      </div>
+    </section>
+
+    <!-- HARDWARE -->
+    <section class="band" id="hardware">
+      <p class="section-label">Hardware</p>
+      <h2>Off-the-shelf parts, one USB hub's worth.</h2>
+      <div class="arch-two">
+        <div>
+          <h3>What it runs on</h3>
+          <table class="spec-table">
+            <tbody>
+              <tr><td>Raspberry Pi 5, 8 GB</td><td>the computer; everything runs here</td></tr>
+              <tr><td>27 W USB-C supply</td><td>a phone charger browns out under camera plus inference</td></tr>
+              <tr><td>64 GB A2 microSD, active cooler</td><td>storage and thermals</td></tr>
+              <tr><td>Logitech C920 webcam</td><td>the one camera, shared by detection and pose</td></tr>
+              <tr><td>USB speakerphone</td><td>far-field microphone and speaker in one</td></tr>
+              <tr><td>LED desk lamp</td><td>the ten-dollar part that fixed the dark-room failures</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div>
+          <h3>The stretch build</h3>
+          <table class="spec-table">
+            <tbody>
+              <tr><td>2× SG90/MG90S servos, pan-tilt bracket</td><td>the head</td></tr>
+              <tr><td>PCA9685 driver</td><td>servo control over I²C</td></tr>
+              <tr><td>SSD1306 128×64 OLED</td><td>the face, same I²C bus</td></tr>
+              <tr><td>Separate 5–6 V supply</td><td>servos never draw from the Pi's 3V3</td></tr>
+            </tbody>
+          </table>
+          <p class="caption">Wiring and bring-up steps are in <code>docs/hardware-build.md</code> in the repository.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- PRACTICE -->
+    <section class="band" id="practice">
+      <p class="section-label">How it's developed</p>
+      <h2>Laptop first, then the Pi.</h2>
+      <div class="arch-two">
+        <div class="col-narrow">
+          <p>
+            Everything is written and tested on a laptop with no hardware attached, then
+            deployed to the Pi. Hardware libraries are imported in isolation so the tests
+            never need them. Dependencies are pinned to exact versions in two requirement
+            files, one for the laptop and one for the Pi. Python 3.11 on both.
+          </p>
+          <p>
+            The test suite runs the engine against synthetic events with simulated clocks,
+            so an escalation that takes two real minutes is tested in milliseconds.
+            <code>main.py --demo</code> plays a scripted sequence end to end without a
+            camera; <code>main.py --live</code> starts the workers for real. A systemd unit
+            starts it on boot.
+          </p>
+        </div>
+        <div class="stats arch-stats">
+          <div class="stat"><span class="stat-num">365</span><span class="stat-label">tests in the suite</span></div>
+          <div class="stat"><span class="stat-num">1</span><span class="stat-label">config file for every threshold</span></div>
+          <div class="stat"><span class="stat-num">0</span><span class="stat-label">bytes of video stored or sent</span></div>
+          <div class="stat"><span class="stat-num">0</span><span class="stat-label">accounts, clouds or subscriptions</span></div>
+        </div>
+      </div>
+      <ul class="tech-tags" style="margin-top:1.5rem;">
+        <li>Python 3.11</li><li>pytest 8.3</li><li>PyYAML 6.0</li><li>Roboflow for labelling</li><li>Colab for training</li><li>systemd</li>
+      </ul>
+    </section>
+
+    <!-- NOT THERE -->
+    <section class="band" id="not">
+      <div class="col-narrow">
+        <p class="section-label">Left out on purpose</p>
+        <h2>What isn't in it.</h2>
+        <p>
+          No always-on wake word: the first demo in a loud room showed it was the weakest
+          link, so a button replaced it. No video recording: frames are processed and
+          dropped, and the research clips keep numbers, not pictures. No cloud and no
+          account: the alert is a plain HTTPS post to a topic the caregiver subscribes to,
+          and that is the only packet that leaves the house.
+        </p>
+        <p class="disclaimer">MeSA is an assistive aid, not a medical device.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-brand">
+      <img src="assets/logo.svg" alt="MeSA 2.0" height="28" />
+      <p>Right medication. On time. Safe at home.</p>
+    </div>
+    <nav class="footer-links">
+      <a href="index.html">MeSA 2.0</a>
+      <a href="tldr.html">TLDR; Robotics Discovery Lab</a>
+      <a href="https://github.com/VrishaankMishra/mesa-ai-robot" target="_blank" rel="noopener">GitHub</a>
+      <a href="#top">Back to top ↑</a>
+    </nav>
+    <p class="fineprint">© <span id="year"></span> Vrishaank Mishra · MeSA is an assistive aid, not a medical device.</p>
+  </footer>
+
+  <script>
+    document.getElementById("year").textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>
