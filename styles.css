@@ -230,15 +230,58 @@ code { font-family: var(--mono); font-size: 0.88em; background: #fff; border: 1p
 .arch-figure { margin: 1.75rem 0; padding: 1rem 0.5rem; background: #fff; border: 1px solid var(--hairline); border-radius: 12px; overflow-x: auto; }
 .arch-svg { display: block; width: 100%; min-width: 640px; height: auto; color: var(--ink); }
 
-/* ---------- The story (story.html) ---------- */
-.story-col { max-width: 62ch; margin: 0 auto; }
-.story-punch { font-family: var(--serif); font-size: clamp(1.2rem, 3vw, 1.6rem); margin: 1.5rem 0 0.5rem; }
-.story-col .cta-row { margin-top: 1.5rem; }
-.story-fig { max-width: 760px; margin: 2.75rem auto; }
-.story-fig.is-portrait { max-width: 460px; }
-.story-fig img { width: 100%; height: auto; border-radius: 12px; display: block; border: 1px solid var(--hairline); }
-.story-fig figcaption { margin-top: 0.6rem; }
-.story-duo { max-width: 760px; margin: 2.75rem auto; display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; align-items: start; }
-.story-duo img { width: 100%; height: auto; border-radius: 12px; display: block; border: 1px solid var(--hairline); }
-.story-duo figcaption { grid-column: 1 / -1; margin-top: 0.2rem; }
-@media (max-width: 560px) { .story-duo { grid-template-columns: 1fr; } }
+/* ---------- My Journey (story.html) — photo-album layout ---------- */
+.album { --tape-teal: #0F8B8D; --tape-orange: #E8762B; --tape-green: #1C6B47; }
+
+.album-row {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 2rem clamp(1.5rem, 4vw, 3.5rem);
+  align-items: center; margin: clamp(2.5rem, 6vw, 4.5rem) 0;
+}
+.album-row:first-child { margin-top: 0.5rem; }
+.album-row:nth-child(even) .album-text { order: 2; }   /* zig-zag the sides */
+.album-text { max-width: 48ch; }
+.album-text p:last-child { margin-bottom: 0; }
+
+.album-photos { display: flex; flex-wrap: wrap; gap: 1.5rem 1.25rem; justify-content: center; }
+
+/* a taped-up polaroid */
+.polaroid {
+  position: relative; margin: 0; background: #fff;
+  padding: 0.7rem 0.7rem 0; border-radius: 3px;
+  width: clamp(190px, 40vw, 262px);
+  box-shadow: 0 10px 22px rgba(20, 17, 15, 0.14), 0 2px 6px rgba(20, 17, 15, 0.10);
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+.polaroid img { width: 100%; height: auto; display: block; border-radius: 2px; background: #efece7; }
+.polaroid.is-portrait { width: clamp(170px, 34vw, 216px); }
+.polaroid figcaption {
+  font-family: "Caveat", "Fraunces", cursive; font-weight: 600;
+  font-size: 1.2rem; line-height: 1.15; color: #2b2724;
+  text-align: center; padding: 0.5rem 0.3rem 0.75rem;
+}
+
+/* the washi tape */
+.polaroid::before {
+  content: ""; position: absolute; top: -11px; left: 50%;
+  width: 84px; height: 25px; transform: translateX(-50%) rotate(-3deg);
+  background: color-mix(in srgb, var(--tape-teal) 52%, transparent);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+}
+.tape--orange::before { background: color-mix(in srgb, var(--tape-orange) 52%, transparent); transform: translateX(-50%) rotate(4deg); }
+.tape--green::before  { background: color-mix(in srgb, var(--tape-green) 52%, transparent);  transform: translateX(-50%) rotate(-5deg); }
+
+/* the tilts */
+.polaroid--l { transform: rotate(-2.5deg); }
+.polaroid--r { transform: rotate(2.2deg); }
+.polaroid--s { transform: rotate(-1deg); }
+.polaroid:hover { transform: rotate(0deg) translateY(-5px); box-shadow: 0 18px 34px rgba(20, 17, 15, 0.22); z-index: 2; }
+
+/* the closing note */
+.album-close { max-width: 60ch; margin: clamp(2.5rem, 6vw, 4rem) auto 0; }
+.album-close .cta-row { margin-top: 1.5rem; }
+.story-punch { font-family: var(--serif); font-size: clamp(1.3rem, 3vw, 1.7rem); margin: 1.5rem 0 0.5rem; }
+
+@media (max-width: 720px) {
+  .album-row { grid-template-columns: 1fr; gap: 1.25rem; }
+  .album-row:nth-child(even) .album-text { order: 0; }
+}
