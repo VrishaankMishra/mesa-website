@@ -15,9 +15,6 @@ black/white, typography-led.
 | `assets/og-image.svg` → `.png` | 1200×630 social preview (SVG source + rendered PNG) |
 | `assets/youtube-banner.svg` → `.png` | 2560×1440 channel banner (SVG source + rendered PNG) |
 | `assets/thumbnails/` | 1280×720 video thumbnails — flagship + one per demo (SVG source + PNG) |
-| `BRAND.md` | brand kit — name, color, type, logo, voice |
-| `YOUTUBE.md` | channel setup + full content plan, scripts, storyboards, metadata |
-| `VIDEO-PRODUCTION.md` | how to film/record/edit/export the demos |
 
 ## Re-rendering the brand images
 The `.svg` files are the editable source; the `.png` files are generated from them. After
