@@ -58,6 +58,19 @@
         </video>
         <figcaption class="caption">The real rig: Raspberry Pi 5, one webcam, a marked medication station, and a $10 lamp that turned out to matter.</figcaption>
       </figure>
+      <script>
+        // Safari may refuse autoplay (per-site Auto-Play setting, Low Power Mode). If so, show controls so one click starts the tour.
+        (function () {
+          var v = document.querySelector(".hero-media video");
+          if (!v) return;
+          var showControls = function () { v.controls = true; };
+          try {
+            var p = v.play();
+            if (p && p.catch) p.catch(showControls);
+          } catch (e) { showControls(); }
+          setTimeout(function () { if (v.paused) showControls(); }, 3000);
+        })();
+      </script>
     </section>
 
     <!-- PROBLEM -->
