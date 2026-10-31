@@ -59,16 +59,19 @@
         <figcaption class="caption">The real rig: Raspberry Pi 5, one webcam, a marked medication station, and a $10 lamp that turned out to matter.</figcaption>
       </figure>
       <script>
-        // Safari may refuse autoplay (per-site Auto-Play setting, Low Power Mode). If so, show controls so one click starts the tour.
+        // Safari may refuse autoplay (per-site Auto-Play setting, Low Power Mode). If the tour is still
+        // paused once it has loaded, show controls so one click starts it; hide them again when it plays.
         (function () {
           var v = document.querySelector(".hero-media video");
           if (!v) return;
-          var showControls = function () { v.controls = true; };
-          try {
+          var showIfPaused = function () { if (v.paused) v.controls = true; };
+          v.addEventListener("playing", function () { v.controls = false; });
+          var attempt = function () {
             var p = v.play();
-            if (p && p.catch) p.catch(showControls);
-          } catch (e) { showControls(); }
-          setTimeout(function () { if (v.paused) showControls(); }, 3000);
+            if (p && p.catch) p.catch(function (err) { if (!err || err.name !== "AbortError") showIfPaused(); });
+          };
+          if (v.readyState >= 1) attempt(); else v.addEventListener("loadedmetadata", attempt, { once: true });
+          setTimeout(showIfPaused, 4000);
         })();
       </script>
     </section>
